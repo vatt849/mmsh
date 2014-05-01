@@ -20,9 +20,16 @@ namespace mmsh.Controllers
             return View();
         }
 
-        public ActionResult Contact()
+        public ActionResult Media()
         {
-            ViewBag.Message = "Контакты";
+            ViewBag.Message = "Медиа";
+
+            return View();
+        }
+
+        public ActionResult Administration()
+        {
+            ViewBag.Message = "Панель управления";
 
             return View();
         }

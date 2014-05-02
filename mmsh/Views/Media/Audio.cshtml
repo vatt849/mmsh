@@ -1,4 +1,41 @@
 ﻿@{
-	ViewBag.Title = "mmsh | Медиа | Аудио";
+	ViewBag.Title = "mmsh | Медиа > Аудио";
 }
 <h3>@ViewBag.Message</h3>
+<script type="text/javascript">
+	function getAudio() {
+		/*$.get('/helper.aspx', { 'function': 'audio', 'action': 'list' }, function (data) {
+			data = eval(data);
+			var tracks = data.tracks;
+			for (_t in tracks) {
+				var t = tracks[_t];
+				var p = $("#playlist").add("<p />");
+				p.html(t.artist + " - " + t.title);
+			}
+		});*/
+		
+		$.ajax({
+			type: "POST",
+			url: "/helper.asmx/getfiles?function=audio&action=list&value=0",
+			success: function (msg) {
+				console.log(msg.d);
+				var h = $(msg.d);
+				h = h.html();
+				console.log(h)
+				var data = eval(h);
+				var tracks = data.tracks;
+				for (_t in tracks) {
+					var t = tracks[_t];
+					var p = $("#playlist").add("<p />");
+					p.html(t.artist + " - " + t.title);
+				}
+			}
+		});
+	}
+</script>
+<div class="row">
+	<div class="col-md-9" id="content">&nbsp;</div>
+	<div class="col-md-3" id="playlist">
+		<button type="button" class="btn btn-default" onclick="getAudio();"><span class="glyphicon glyphicon-refresh"></span></button>
+	</div>
+</div>

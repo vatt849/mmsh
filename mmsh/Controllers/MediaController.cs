@@ -10,15 +10,12 @@ namespace mmsh.Controllers
     {
         //
         // GET: /Media/
-        /*public ActionResult Index()
+        public ActionResult Index()
         {
-            return View();
-        }*/
-        public string Index()
-        {
-            return "mmsh media index";
-        }
+            ViewBag.Message = "Медиа";
 
+            return View();
+        }
         public ActionResult Audio()
         {
             ViewBag.Message = "Медиа > Аудио";
@@ -39,5 +36,5 @@ namespace mmsh.Controllers
 
             return View();
         }
-    }
+	}
 }

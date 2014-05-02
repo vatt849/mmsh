@@ -83,7 +83,7 @@ namespace mmsh.Controllers
                 if (result.Succeeded)
                 {
                     await SignInAsync(user, isPersistent: false);
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "Pages");
                 }
                 else
                 {
@@ -290,7 +290,7 @@ namespace mmsh.Controllers
         public ActionResult LogOff()
         {
             AuthenticationManager.SignOut();
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Pages");
         }
 
         //
@@ -372,7 +372,7 @@ namespace mmsh.Controllers
             }
             else
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "Pages");
             }
         }
 

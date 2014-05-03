@@ -54,6 +54,7 @@ namespace mmsh
                 try
                 {
                     string[] answer = Directory.GetFiles(paths.get(function));
+                    int i = answer.Count();
                     foreach (string _s in answer)
                     {
                         if (_s.Split('.').Last() == "mp3")
@@ -62,20 +63,18 @@ namespace mmsh
                             outJSON = outJSON + "{";
                             outJSON = outJSON + "'artist':'" + tagFile.Tag.FirstAlbumArtist + "',";
                             outJSON = outJSON + "'title':'" + tagFile.Tag.Title + "',";
-                            outJSON = outJSON + "'path':'" + _s + "',";
-                            outJSON = outJSON + "}";
+                            outJSON = outJSON + "'path':'" + _s + "'";
+                            outJSON = outJSON + "},";
 
                         }
                     }
+                    outJSON = outJSON.Remove(outJSON.Length-1);
                 }
                 catch (Exception e)
                 {
-                    outJSON = "{error: '" + e.ToString() + "'}";
+                    outJSON = "false";
                 }
-                //out to page
-                //main.InnerText = output;
-                //out to response
-                //outJSON;
+                outJSON = outJSON + "]}";
             }
             else if (action == "get")
             {

@@ -13,29 +13,34 @@
 				p.html(t.artist + " - " + t.title);
 			}
 		});*/
-		
 		$.ajax({
-			type: "POST",
-			url: "/helper.asmx/getfiles?function=audio&action=list&value=0",
+			type: "GET",
+			url: "/helper.asmx/getfiles",
+			data: encodeURI("function=audio&action=list&value=0"),
 			success: function (msg) {
-				console.log(msg.d);
-				var h = $(msg.d);
+				//console.log(msg);
+				var h = $('string', msg);
 				h = h.html();
-				console.log(h)
+				//console.log(h)
 				var data = eval(h);
-				var tracks = data.tracks;
-				for (_t in tracks) {
-					var t = tracks[_t];
-					var p = $("#playlist").add("<p />");
-					p.html(t.artist + " - " + t.title);
+				//console.log(data);
+				var pl = $('#playlist');
+				var ul = $('<ul />').appendTo(pl);
+				for (_t in data) {
+					var t = data[_t];
+					$('<li />').appendTo(ul)
+						.text((t.artist || "VA") + " - " + t.title);
 				}
 			}
 		});
 	}
+	$(function () {
+		getAudio();
+	});
 </script>
 <div class="row">
 	<div class="col-md-9" id="content">&nbsp;</div>
 	<div class="col-md-3" id="playlist">
-		<button type="button" class="btn btn-default" onclick="getAudio();"><span class="glyphicon glyphicon-refresh"></span></button>
+		<!--<button type="button" class="btn btn-default" onclick="getAudio();"><span class="glyphicon glyphicon-refresh"></span></button>-->
 	</div>
 </div>

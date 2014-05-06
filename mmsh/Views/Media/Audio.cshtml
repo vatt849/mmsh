@@ -13,23 +13,35 @@
 				p.html(t.artist + " - " + t.title);
 			}
 		});*/
+
+		//var par = '{"function":"audio","action":"list","value":"0"}',
+		//var par = encodeURI("function=audio&action=list&value=0"),
+		var params = {
+			'function': 'audio',
+			'action': 'list',
+			'value': 0
+		};
+		var d = { par: $.toJSON(params) };
 		$.ajax({
 			type: "GET",
 			url: "/helper.asmx/getfiles",
-			data: encodeURI("function=audio&action=list&value=0"),
+			data: d,
+			dataType: "json",
+			contentType: "application/json; charset=windows-1251",
 			success: function (msg) {
-				//console.log(msg);
-				var h = $('string', msg);
-				h = h.html();
-				//console.log(h)
-				var data = eval(h);
-				//console.log(data);
+				console.log(msg);
+				var data = $.toJSON(msg);
+				console.log(data);
 				var pl = $('#playlist');
 				var ul = $('<ul />').appendTo(pl);
 				for (_t in data) {
 					var t = data[_t];
 					$('<li />').appendTo(ul)
-						.text((t.artist || "VA") + " - " + t.title);
+						.text((t.artist || "VA") + " - " + t.title)
+						.data({ path: t.path })
+						.click(function () {
+							alert(this.data('path'));
+						});
 				}
 			}
 		});

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Services;
 using System.Web.Script.Services;
+using System.Web.Script.Serialization;
 
 namespace mmsh
 {
@@ -26,10 +27,38 @@ namespace mmsh
             return answer;
         }
     }
+    public class audio
+    {
+        public string artist;
+        public string title;
+        public string path;
+        public string mime;
+
+        public audio(string _artist, string _title, string _path)
+        {
+            artist = _artist;
+            title = _title;
+            path = _path;
+            mime = MimeMapping.GetMimeMapping(path);
+        }
+        public audio()
+        {
+            artist = "VA";
+            title = "track";
+            path = "";
+            mime = MimeMapping.GetMimeMapping(path);
+        }
+    }
+    public class Parameters
+    {
+        public string function { get; set; }
+        public string action { get; set; }
+        public string value { get; set; }
+    }
     /// <summary>
     /// Сводное описание для helper
     /// </summary>
-    [WebService(Namespace = "http://tempuri.org/")]
+    //[WebService(Namespace = "http://tempuri.org/")]
     [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
     [System.ComponentModel.ToolboxItem(false)]
     // Чтобы разрешить вызывать веб-службу из скрипта с помощью ASP.NET AJAX, раскомментируйте следующую строку. 
@@ -45,43 +74,85 @@ namespace mmsh
 
         [WebMethod]
         [ScriptMethod(UseHttpGet = true, ResponseFormat = ResponseFormat.Json)]
-        public string getfiles(string function, string action, string value)
+        public void getfiles(Parameters par)
         {
             string outJSON = null;
-            if (action == "list")
+            if (par.action == "list")
             {
                 outJSON = "{tracks:[";
                 try
                 {
-                    string[] answer = Directory.GetFiles(paths.get(function));
+                    string[] answer = Directory.GetFiles(paths.get(par.function));
                     int i = answer.Count();
                     foreach (string _s in answer)
                     {
                         if (_s.Split('.').Last() == "mp3")
                         {
                             TagLib.File tagFile = TagLib.File.Create(_s);
-                            outJSON = outJSON + "{";
-                            outJSON = outJSON + "'artist':'" + tagFile.Tag.FirstAlbumArtist + "',";
-                            outJSON = outJSON + "'title':'" + tagFile.Tag.Title + "',";
-                            outJSON = outJSON + "'path':'" + _s + "'";
-                            outJSON = outJSON + "},";
-
+                            audio _a = new audio(tagFile.Tag.FirstAlbumArtist, tagFile.Tag.Title, _s);
+                            JavaScriptSerializer js = new JavaScriptSerializer();
+                            /*outJSON = outJSON + "{";
+                            outJSON = outJSON + "artist:'" + tagFile.Tag.FirstAlbumArtist + "',";
+                            outJSON = outJSON + "title:'" + tagFile.Tag.Title + "',";
+                            outJSON = outJSON + "path:'" + _s + "',";
+                            outJSON = outJSON + "mime:'" + MimeMapping.GetMimeMapping(_s) +"'";
+                            outJSON = outJSON + "},";*/
+                            outJSON = outJSON + js.Serialize(_a);
                         }
                     }
-                    outJSON = outJSON.Remove(outJSON.Length-1);
+                    outJSON = outJSON.Remove(outJSON.Length - 1);
                 }
-                catch (Exception e)
+                catch
                 {
                     outJSON = "false";
                 }
                 outJSON = outJSON + "]}";
+
+                //JavaScriptSerializer js = new JavaScriptSerializer();
+                Context.Response.Clear();
+                Context.Response.ContentType = "application/json";
+                Context.Response.Write(outJSON);
             }
-            else if (action == "get")
+            else if (par.action == "get")
             {
-
+                streamFile("", "");
             }
 
-            return outJSON;
+            //return outJSON;
+        }
+
+        public void streamFile(string secureFilePath, string userFilename/*, string contentType = @"application/octet-stream"*/)
+        {
+            // Process the file in 4K blocks
+            byte[] dataBlock = new byte[0x1000];
+            long fileSize;
+            int bytesRead;
+            long totalBytesRead = 0;
+
+            string mime = MimeMapping.GetMimeMapping(Directory.GetFiles(paths.audio)[0]);
+
+            using (var fs = new FileStream(Directory.GetFiles(paths.audio)[0]/*Server.MapPath(secureFilePath)*/,
+                FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                fileSize = fs.Length;
+
+                Context.Response.Clear();
+                Context.Response.ContentType = @mime;//contentType;
+                //Context.Response.AddHeader("Content-Disposition", "attachment; filename=" + userFilename);
+
+                while (totalBytesRead < fileSize)
+                {
+                    if (!Context.Response.IsClientConnected)
+                        break;
+
+                    bytesRead = fs.Read(dataBlock, 0, dataBlock.Length);
+                    Context.Response.OutputStream.Write(dataBlock, 0, bytesRead);
+                    Context.Response.Flush();
+                    totalBytesRead += bytesRead;
+                }
+
+                Context.Response.Close();
+            }
         }
     }
 }

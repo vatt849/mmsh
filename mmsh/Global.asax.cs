@@ -16,6 +16,7 @@ namespace mmsh
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+            Catharsis.Web.Widgets.WebWidgetsBundleConfig.RegisterBundles(BundleTable.Bundles);
         }
     }
 }

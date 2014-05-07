@@ -4,45 +4,57 @@
 <h3>@ViewBag.Message</h3>
 <script type="text/javascript">
 	function getAudio() {
-		/*$.get('/helper.aspx', { 'function': 'audio', 'action': 'list' }, function (data) {
-			data = eval(data);
-			var tracks = data.tracks;
-			for (_t in tracks) {
-				var t = tracks[_t];
-				var p = $("#playlist").add("<p />");
-				p.html(t.artist + " - " + t.title);
-			}
-		});*/
-
-		//var par = '{"function":"audio","action":"list","value":"0"}',
-		//var par = encodeURI("function=audio&action=list&value=0"),
 		var params = {
-			'function': 'audio',
-			'action': 'list',
-			'value': 0
+			'type': 'audio'
 		};
 		var d = { par: $.toJSON(params) };
 		$.ajax({
 			type: "GET",
-			url: "/helper.asmx/getfiles",
+			url: "/helper.asmx/getlist",
 			data: d,
+			async: true,
+			dataType: "json",
+			contentType: "application/json; charset=windows-1251",
+			success: function (msg) {
+				var data = msg.d;
+				console.log(data);
+				var pl = $('#playlist');
+				var ul = $('<ul />').appendTo(pl);
+				var i = 0;
+				for (_t in data) {
+					var t = data[_t];
+					var li = $('<li />').appendTo(ul);
+					$('<a />').appendTo(li)
+						.text((t.artist || "VA") + " - " + t.title)
+						.data({ path: t.path })
+						.attr({ id: 'track' + i })
+						.click(function () {
+							$('audio' + i).pause();
+						});
+					$('<audio />').appendTo(li)
+						.attr({
+							id: 'audio' + i,
+							src: '/helper.asmx/getfiles?path=' + encodeURI(t.path),
+							controls: true
+						});
+				}
+			}
+		});
+	}
+	function test() {
+		var params = {
+			'type': 'audio'
+		};
+		var d = { par: $.toJSON(params) };
+		$.ajax({
+			type: "GET",
+			url: "/helper.asmx/getlist",
+			data: d,
+			async: true,
 			dataType: "json",
 			contentType: "application/json; charset=windows-1251",
 			success: function (msg) {
 				console.log(msg);
-				var data = $.toJSON(msg);
-				console.log(data);
-				var pl = $('#playlist');
-				var ul = $('<ul />').appendTo(pl);
-				for (_t in data) {
-					var t = data[_t];
-					$('<li />').appendTo(ul)
-						.text((t.artist || "VA") + " - " + t.title)
-						.data({ path: t.path })
-						.click(function () {
-							alert(this.data('path'));
-						});
-				}
 			}
 		});
 	}
@@ -51,8 +63,8 @@
 	});
 </script>
 <div class="row">
-	<div class="col-md-9" id="content">&nbsp;</div>
-	<div class="col-md-3" id="playlist">
+	<div class="col-md-9" id="playlist">&nbsp;</div>
+	<div class="col-md-3" id="info">
 		<!--<button type="button" class="btn btn-default" onclick="getAudio();"><span class="glyphicon glyphicon-refresh"></span></button>-->
 	</div>
 </div>

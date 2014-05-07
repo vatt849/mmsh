@@ -1,6 +1,8 @@
 ﻿@using Catharsis.Web.Widgets
 @{
 	ViewBag.Title = "mmsh | Медиа > Видео";
+	WebWidgetsScripts.Render().VideoJS();
+	WebWidgetsStyles.Render().VideoJS();
 }
 <h3>@ViewBag.Message</h3>
-@Html.VideoJS()
+@Html.VideoJS().Player().Width("640").Height("480").Videos(new MediaSource("/helper.asmx/getfiles?path=" + HttpUtility.HtmlEncode(paths.video + "\\Игра престолов Сезон 1\\Игра престолов Сезон 1 серия 01.mp4"), VideoContentTypes.MP4))

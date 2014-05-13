@@ -1,67 +1,71 @@
 ﻿@{
 	ViewBag.Title = "mmsh | Медиа > Аудио";
 }
-<h3>@ViewBag.Message</h3>
-<script type="text/javascript">
-	function getAudio() {
-		var params = {
-			'type': 'audio'
-		};
-		var d = { par: $.toJSON(params) };
-		$.ajax({
-			type: "GET",
-			url: "/helper.asmx/getlist",
-			data: d,
-			async: true,
-			dataType: "json",
-			contentType: "application/json; charset=windows-1251",
-			success: function (msg) {
-				var data = msg.d;
-				console.log(data);
-				var pl = $('#playlist');
-				var ul = $('<ul />').appendTo(pl);
-				var i = 0;
-				for (_t in data) {
-					var t = data[_t];
-					var li = $('<li />').appendTo(ul);
-					$('<a />').appendTo(li)
-						.text((t.artist || "VA") + " - " + t.title)
-						.data({ path: t.path })
-						.attr({ id: 'track' + i })
-						.click(function () {
-							$('audio' + i).pause();
-						});
-					$('<audio />').appendTo(li)
-						.attr({
-							id: 'audio' + i,
-							src: '/helper.asmx/getfiles?path=' + encodeURI(t.path),
-							controls: true
-						});
+@section additional
+{
+	<script type="text/javascript">
+		function getAudio() {
+			var params = {
+				'type': 'audio'
+			};
+			var d = { par: params };
+			$.ajax({
+				type: "POST",
+				url: "/helper.svc/getlist",
+				data: $.toJSON(d),
+				async: false,
+				dataType: "json",
+				contentType: "application/json; charset=utf-8",
+				success: function (msg) {
+					var data = msg.d;
+					console.log(data);
+					var pl = $('#playlist');
+					var ul = $('<ul />').appendTo(pl);
+					var i = 0;
+					for (_t in data) {
+						var t = data[_t];
+						var li = $('<li />').appendTo(ul);
+						$('<a />').appendTo(li)
+							.text((t.artist || "VA") + " - " + t.title)
+							.data({ path: t.path })
+							.attr({ id: 'track' + i })
+							.click(function () {
+								$('audio' + i).pause();
+							});
+						$('<audio />').appendTo(li)
+							.attr({
+								id: 'audio' + i,
+								src: '/helper.svc/stream?uname=' + encodeURI(t.path),
+								controls: true
+							});
+					}
 				}
-			}
+			});
+		}
+		function test() {
+			var params = {
+				'type': 'audio'
+			};
+			var d = { par: $.toJSON(params) };
+			$.ajax({
+				type: "GET",
+				url: "/helper.svc/getlist",
+				data: d,
+				async: true,
+				dataType: "json",
+				contentType: "application/json; charset=utf-8",
+				success: function (msg) {
+					console.log(msg);
+				}
+			});
+		}
+		$(function () {
+			getAudio();
 		});
-	}
-	function test() {
-		var params = {
-			'type': 'audio'
-		};
-		var d = { par: $.toJSON(params) };
-		$.ajax({
-			type: "GET",
-			url: "/helper.asmx/getlist",
-			data: d,
-			async: true,
-			dataType: "json",
-			contentType: "application/json; charset=windows-1251",
-			success: function (msg) {
-				console.log(msg);
-			}
-		});
-	}
-	$(function () {
-		getAudio();
-	});
-</script>
+	</script>
+}
+<h3>@ViewBag.Message</h3>
+
 <div class="row">
 	<div class="col-md-9" id="playlist">&nbsp;</div>
 	<div class="col-md-3" id="info">

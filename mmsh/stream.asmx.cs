@@ -66,7 +66,7 @@ namespace mmsh
     [System.ComponentModel.ToolboxItem(false)]
     // Чтобы разрешить вызывать веб-службу из скрипта с помощью ASP.NET AJAX, раскомментируйте следующую строку. 
     [ScriptService]
-    public class helper : System.Web.Services.WebService
+    public class stream : System.Web.Services.WebService
     {
 
         [WebMethod]

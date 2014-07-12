@@ -4,9 +4,32 @@
 }
 @section additional{
 	@*WebWidgetsScripts.Render().VideoJS()
-	@WebWidgetsStyles.Render().VideoJS()*@
+		@WebWidgetsStyles.Render().VideoJS()*@
 	<script src="@Url.Content("/Scripts/WebWidgets/video.js")" type="text/javascript"></script>
 	<link href="@Url.Content("/Content/video-js.css")" rel="stylesheet" type="text/css" />
 }
 <h3>@ViewBag.Message</h3>
-@Html.VideoJS().Player().Width("640").Height("480").Videos(new MediaSource("/helper.svc/stream?uname=" + HttpUtility.HtmlEncode(paths.video + "\\Игра престолов Сезон 1\\Игра престолов Сезон 1 серия 01.mp4"), VideoContentTypes.MP4))
+@*Html.VideoJS().Player().Width("640").Height("480").Videos(new MediaSource("/helper.svc/stream?uname=" + HttpUtility.HtmlEncode(paths.video + "\\Игра престолов Сезон 1\\Игра престолов Сезон 1 серия 01.mp4"), VideoContentTypes.MP4))*@
+<video id="vd" src=""></video>
+<script type="text/javascript">
+	$(function () {
+		$.ajax({
+			type: "POST",
+			url: "/streamer.svc/stream",
+			data: "{}",
+			async: false,
+			//dataType: "json",
+			//contentType: "application/json; charset=utf-8",
+			contentType: 'multipart/related; type="application/xop+xml"',
+			success: function (msg) {
+				console.log(msg);
+				/*var data = msg.d;
+				$('#vd').attr({
+					src: "data:" + data.mime + ";base64," + data.content,
+					controls: true
+				});
+				window.open("data:" + data.mime + ";base64," + data.content, '_blank', 'height=300, width=400');*/
+			}
+		});
+	});
+</script>

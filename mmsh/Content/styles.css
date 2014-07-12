@@ -1,0 +1,25 @@
+﻿.a-c {
+    background: #4e4e4e;
+    height: 100%;
+    padding: 2px;
+    border-radius: 5px;
+}
+.a-c:hover {
+    background: #707070;
+}
+.a-c * {
+    border-radius: 2px;
+    margin: 2px;
+}
+.a-c audio {
+    width: 100%;
+}
+.a-t {
+    background: #ffffff;
+    text-align: center;
+    font-weight: 700;
+}
+.a-a {
+    background: #ffffff;
+    text-align: center;
+}

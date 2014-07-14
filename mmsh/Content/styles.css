@@ -1,25 +1,108 @@
-﻿.a-c {
+﻿.a-c:first-child {
+    border-radius: 5px 5px 0px 0px;
+}
+.a-c:last-child {
+    border-radius: 0px 0px 5px 5px;
+}
+.a-c {
     background: #4e4e4e;
-    height: 100%;
+    width: 100%;
     padding: 2px;
-    border-radius: 5px;
+    height: 50px;
 }
 .a-c:hover {
     background: #707070;
 }
 .a-c * {
-    border-radius: 2px;
+    position: relative;
     margin: 2px;
+    left: 50px;
+    bottom: 44px;
+    width: 90%;
 }
 .a-c audio {
     width: 100%;
+    display: none;
 }
 .a-t {
+    border-radius: 2px 2px 0px 0px;
     background: #ffffff;
     text-align: center;
     font-weight: 700;
 }
 .a-a {
+    border-radius: 0px 0px 2px 2px;
     background: #ffffff;
     text-align: center;
 }
+.a-p {
+    background: #9b9b9b;
+    left: 0px !important;
+    top: 0px !important;
+    height: 42px;
+    width: 42px;
+    color: white;
+    font-weight: 900;
+    text-align: center;
+    padding-top: 8px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+#player {
+    border: 1px solid black;
+    border-radius: 2px;
+    padding: 0px;
+}
+#player #player-head {
+    margin: 0px;
+    padding: 0px;
+    height: 30px;
+}
+#player #player-head #controls {
+    margin: 0px;
+    padding: 0px;
+    border-right: 1px solid black;
+    display: inline-block;
+    width: 91px;
+    height: 30px;
+}
+#player #player-head #controls * {
+    position: relative;
+    margin: 0px;
+    background: #929292;
+    text-align: center;
+    padding-top: 4px;
+}
+#player #player-head #controls #play-pause {
+    border-right: 1px solid black;
+    height: 30px;
+    width: 30px;
+}
+#player #player-head #controls #stop {
+    border-right: 1px solid black;
+    height: 30px;
+    width: 30px;
+    top: -30px;
+    left: 30px;
+}
+#player #player-head #controls #volume {
+    height: 30px;
+    width: 30px;
+    top: -60px;
+    left: 60px;
+}
+#player #player-head #title {
+    position: relative;
+    left: 95px;
+    top: -80px;
+    width: 85%;
+    /*border: 1px solid red;*/
+}
+#player #position {
+    border-top: 1px solid black;
+}
+#player audio-container {
+    width: 100%;
+    display: none;
+}
+

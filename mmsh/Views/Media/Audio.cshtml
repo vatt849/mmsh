@@ -4,6 +4,36 @@
 @section additional
 {
     <script type="text/javascript">
+        audios = [];
+        function stopandplay() {
+
+        }
+        function stopAudio(i) {
+            var au = audios[i].audio;
+            if (au.length > 0) {
+                //pause playing
+                au.trigger('pause');
+                //set play time to 0
+                au.prop("currentTime", 0);
+            }
+        }
+        function stopNCAudio(n) {
+            for (i = 0; i < audios.length; i++) {
+                if (i != n) {
+                    stopAudio(i);
+                    console.log('stopped all not current');
+                }
+            }
+        }
+        function ppAudio(au, th) {
+            if (au.paused == true) {
+                au.play();
+                th.text('Pause');
+            } else {
+                au.pause();
+                th.text('Play');
+            }
+        }
         function getAudio() {
             var params = {
                 'type': 'audio'
@@ -24,25 +54,59 @@
                     for (_t in data) {
                         var t = data[_t];
                         var ac = $('<div class="a-c" />').appendTo(pl);
+                        var ap = $('<div class="a-p" />').appendTo(ac)
+                            .text('Play')
+                            .data({
+                                n: i,
+                                p: encodeURI(t.path)
+                            })
                         var at = $('<div class="a-t" />').appendTo(ac);
                         var aa = $('<div class="a-a" />').appendTo(ac);
                         ac.data({ path: t.path })
 							.attr({ id: 'track' + i })
-							.click(function () {
-							    if (!$('#audio' + i).length) {
-							        $('<audio />').appendTo('#track' + i)
-							            .attr({
-							                id: 'audio' + i,
-							                src: '/helper.svc/stream?uname=' + encodeURI(t.path),
-							                controls: true
-							            });
-							    } else {
-							        $('#audio' + i).remove();
-							    }
-							});
+                            .data({
+                                n: i,
+                                p: encodeURI(t.path)
+                            })
+                        /*.click(function () {
+                            if (!$('#audio' + $(this).data('n')).length) {
+                                $('<audio />').attr({
+                                    id: 'audio' + $(this).data('n'),
+                                    src: '/helper.svc/stream?uname=' + $(this).data('p'),
+                                    controls: true
+                                }).appendTo($(this));
+                            } else {
+                                $('#audio' + $(this).data('n')).remove();
+                            }
+                        });*/
+                        ap.click(function () {
+                            var th = $(this);
+                            if (!$('#audio' + th.data('n')).length) {
+                                audios[th.data('n')].audio = $('<audio />').attr({
+                                    id: 'audio' + th.data('n'),
+                                    src: '/helper.svc/stream?uname=' + th.data('p'),
+                                    controls: true
+                                }).appendTo(th.parent());
+                                console.log('created audio if not exists');
+                            }
+                            //stopNCAudio('#audio' + th.data('n'));
+                            var au = $('#audio' + th.data('n'))[0];
+                            ppAudio(au, th);
+                        });
+
                         aa.text(t.artist || "VA");
                         at.text(t.title || "Untitled");
+                        audios.push({
+                            n: i,
+                            path: t.path,
+                            container: ac,
+                            title: at,
+                            artist: aa,
+                            trigger: ap,
+                            audio: null
+                        });
                         i++;
+                        if (i > 10) break;
                     }
                     /*var ul = $('<ul />').appendTo(pl);
                     var i = 0;
@@ -90,6 +154,22 @@
 }
 <h3>@ViewBag.Message</h3>
 
+<div class="row">
+    <div class="col-md-9" id="player">
+        <div id="player-head">
+            <div id="controls">
+                <div id="play-pause">play</div>
+                <div id="stop">stop</div>
+                <div id="volume">vol</div>
+            </div>
+            <div id="title">title</div>
+        </div>
+        <div id="position">pos</div>
+        <div id="audio-container">
+            <audio id="audio"></audio>
+        </div>
+    </div>
+</div>
 <div class="row">
     <div class="col-md-9" id="playlist">&nbsp;</div>
     <div class="col-md-3" id="info">
